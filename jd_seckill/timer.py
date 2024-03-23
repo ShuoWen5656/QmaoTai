@@ -14,9 +14,11 @@ class Timer(object):
         # buy_time = 2020-12-22 09:59:59.500
         buy_time_everyday = global_config.getRaw('config', 'buy_time').__str__()
         localtime = time.localtime(time.time())
+        # 购买时间:这里使用了当天的日期，因为抢购通常都是当天的，也可以自己设置日期
         self.buy_time = datetime.strptime(
-            localtime.tm_year.__str__() + '-' + localtime.tm_mon.__str__() + '-' + localtime.tm_mday.__str__()
-            + ' ' + buy_time_everyday,
+            # localtime.tm_year.__str__() + '-' + localtime.tm_mon.__str__() + '-' + localtime.tm_mday.__str__()
+            # + ' ' + buy_time_everyday,
+            buy_time_everyday,
             "%Y-%m-%d %H:%M:%S.%f")
         self.buy_time_ms = int(time.mktime(self.buy_time.timetuple()) * 1000.0 + self.buy_time.microsecond / 1000)
         self.sleep_interval = sleep_interval
@@ -28,10 +30,10 @@ class Timer(object):
         从京东服务器获取时间毫秒
         :return:
         """
-        url = 'https://a.jd.com//ajax/queryServerData.html'
+        url = 'http://api.k780.com:88/?app=life.time&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4&format=json'
         ret = requests.get(url).text
         js = json.loads(ret)
-        return int(js["serverTime"])
+        return int(js["result"]['timestamp'])*1000
 
     def local_time(self):
         """
